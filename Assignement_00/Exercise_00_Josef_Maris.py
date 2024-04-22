@@ -61,7 +61,7 @@ print(V)
 # initialize R as the range from 8 to 24 (including 24) with a stepsize of 2
 R = np.arange(8,26,2)
 # print the fourth entry of R
-print('The fourth entry of R is: ' + str(R[4]))
+print('The fourth entry of R is: ' + str(R[3]))
 # initialize L as the linespace from -2.5 to 2.5 with 50 samples
 L = np.linspace(-2.5, 2.5, 50)
 # print the 20th entry of L
@@ -108,8 +108,8 @@ else:
 # 6. For-loop
 # Use a for-loop to calculate the sum of the first 50 even numbers (starting with 0)
 sum = 0
-for i in range(0, 102, 2):
-    sum = sum + i    
+for i in range(0, 100, 2):
+    sum += i
 print('The sum of the first 50 even numbers is: ' + str(sum))
 
 
@@ -123,7 +123,7 @@ print(polynom(5))
 
 # implement the function h(x,y) = (x/y, exp(x))
 def h(x,y):
-    h_result = np.array([x/y, np.exp(x)])
+    h_result = (x/y, np.exp(x))
     return h_result
 print(h(1, 1))
 
