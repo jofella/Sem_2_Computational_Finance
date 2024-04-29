@@ -35,7 +35,7 @@ def CRR_stock(S_0, r, sigma, T, M):
     delta_t = T/M #cause all t's have equal distance
     
     # Skript: 1.4 to 1.7 - Setting u, d, q
-    beta = 0.5 * math.exp(-r * delta_t) + math.exp((r + np.power(sigma, 2) * delta_t))
+    beta = 0.5 * (math.exp(-r * delta_t) + math.exp(((r + np.power(sigma, 2)) * delta_t)))
     u = beta + np.sqrt(np.power(beta, 2) - 1)
     d = np.power(u, -1)
     q = (math.exp(r * delta_t) - d) / (u - d)
@@ -54,12 +54,14 @@ def CRR_stock(S_0, r, sigma, T, M):
 S = CRR_stock(100, 0.03, 0.3, 1, 100) #Values from d)
 
 # Sense check S[50] == S_0?
-print(S[50])
+print(S[100])
 
 
-
+M = 100
 # Testing
-S_ji = np.empty((M + 1, ))
+S_ji = np.empty((M + 1),(M + 1) )
+print(np.where(S_ji))
+
 
 
 
@@ -67,11 +69,7 @@ S_ji = np.empty((M + 1, ))
 
 def CRR_EuCall(S_0, r, sigma, T, M, K):
     
-    
-    
     return V_0
-
-
 
 
 # c) BS European Call
@@ -90,7 +88,12 @@ def BlackScholes_EuCall(t, S_t, r, sigma, T, K):
 V_0_BS = BlackScholes_EuCall(0, 100, 0.03, 0.3, 100, 70)
 print(V_0_BS)
 
+
+
 # d) Comparing BS and CRR
+
+
+
 
 
 
@@ -112,10 +115,12 @@ def log_returns(data):
 ## Part 1: Working with log-returns
 
 # 1.Step: Import data
-dax = np.genfromtxt(r"C:\Users\josef\Documents\GitHub\Sem_2_Computational_Finance\Assignement_01\time_series_dax_2024.csv", 
+dax = np.genfromtxt("time_series_dax_2024.csv", 
                     delimiter = ';'
                     , usecols = 4,
                     skip_header = 1)
+
+
 
 # 2.Step: Flip ts 
 dax = np.flip(dax)
@@ -124,6 +129,8 @@ dax = np.flip(dax)
 dax_log_returns = log_returns(dax)
 
 # 4.Step: Visualize log returns
+
+plt.clf()
 plt.plot(dax_log_returns)
 
 plt.title('DAX Log-Returns (1990-2024)')
@@ -175,7 +182,7 @@ print(dax_simulated_log_returns)
 
 
 # 2.Step: Plot results
-
+plt.clf()
 plt.plot(dax_simulated_log_returns, color='blue')
 plt.plot(dax_log_returns, color='red')
 
@@ -187,3 +194,7 @@ plt.show()
 
 
 # d) Comparing empirical with simulated data
+
+# The simulated are way more volatile than the actual market log returns. 
+# --> Normal distribution are related to "fat tails" so here we are overestimating our risk ???
+# seems weird tbh
