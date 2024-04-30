@@ -63,7 +63,7 @@ M = 100
 
 # Print results:
 S = CRR_stock(S_0, r, sigma, T, M) #Values from d)
-print(S[1,0:4])
+print(S)
 
 
 
