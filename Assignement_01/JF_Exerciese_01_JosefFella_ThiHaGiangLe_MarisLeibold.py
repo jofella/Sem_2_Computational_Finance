@@ -190,6 +190,7 @@ plt.legend()
 plt.show()
 
 
+
 """"----------------------------------------------------------------
 T-Exercise 02
 ----------------------------------------------------------------"""
@@ -199,8 +200,7 @@ T-Exercise 02
 # Idea: Looping thru the ts/array and calculate the log returns according to the formula
 
 def log_returns(data):
-    log_returns = np.diff( np.log(data))
-    return log_returns
+    return np.diff( np.log(data))
 
 
 # b) Test the function
@@ -209,8 +209,9 @@ def log_returns(data):
 
 # 1.Step: Import data
 
-# Remark: We saw your comment on not including the path. But even when we put the file
-# in the same folder it doesn't work. We stored the path now in a seperate variable
+# REMARK: We saw your comment on not including the path. But even when we put the file
+# in the same folder it doesn't work for all of us. 
+# We stored the path now in a seperate variable.
 
 path = r"C:\Users\josef\Documents\GitHub\Sem_2_Computational_Finance\Assignement_01\time_series_dax_2024.csv"
 dax = np.genfromtxt(path, 
@@ -226,13 +227,12 @@ dax = np.flip(dax)
 dax_log_returns = log_returns(dax)
 
 # 4.Step: Visualize log returns
-
 plt.clf()
 plt.plot(dax_log_returns)
 
 plt.title('DAX Log-Returns (1990-2024)')
 plt.xlabel('Trading days')
-plt.ylabel('Daily Log-Return')
+plt.ylabel('Daily Log-Returns')
 
 plt.show()
 
@@ -241,57 +241,58 @@ plt.show()
 
 # 1.Step: Get empirical mean
 
-# idea: Define all parts of formula and then calculate it
+# idea: Define all parameters of formula and then calculate it
 trading_days = 250
 N = len(dax_log_returns)
 sum_lk = 0
 
-for k in range(N - 2):
-    sum_lk += dax_log_returns[k + 2]
-        
+for k in range(N - 1):
+    sum_lk += dax_log_returns[k + 1]
+       
 # Calculate empirical mu
 dax_empirical_mu = trading_days / (N - 1) * sum_lk
 
 print(dax_empirical_mu)
-
 
 # 2.Step: Get empirical variance
 trading_days = 250
 N = len(dax_log_returns)
 sum_lk = 0
 
-for k in range(N - 2):
-    sum_lk += np.power(dax_log_returns[k + 2] - dax_empirical_mu / trading_days, 2)
+for k in range(N - 1):
+    sum_lk += np.power(dax_log_returns[k + 1] - dax_empirical_mu / trading_days, 2)
 
 print(sum_lk)
 
 # Calculate empirical sigma
-dax_empirical_sigma = trading_days / (N - 2) * sum_lk
+dax_empirical_sigma = np.sqrt(trading_days / (N - 2) * sum_lk)
 
 print(dax_empirical_sigma)
+
 
 
 # c) Simulate ts of log returns with normal distribution
 
 # 1.Step: Generate normally distributed values with our imput parameters
-dax_simulated_log_returns = np.random.normal(dax_empirical_mu, dax_empirical_mu, N)
-print(dax_simulated_log_returns)
+dax_simulated_log_returns = np.random.normal(dax_empirical_mu, dax_empirical_sigma, N)
+print(np.mean(dax_log_returns), np.std(dax_log_returns))
 
 
 # 2.Step: Plot results
 plt.clf()
-plt.plot(dax_simulated_log_returns, color='blue')
-plt.plot(dax_log_returns, color='red')
+plt.plot(dax_simulated_log_returns, color='blue', label='Simulated Log-Returns')
+plt.plot(dax_log_returns, color='red', label='Observed Log-Returns')
 
 plt.title('Comparison Simulated versus observed log returns')
 plt.xlabel('Trading Days')
 plt.ylabel('Return')
 
+plt.legend()
 plt.show()
 
 
 # d) Comparing empirical with simulated data
 
-# The simulated are way more volatile than the actual market log returns. 
-# --> Normal distribution are related to "fat tails" so here we are overestimating our risk ???
-# seems weird tbh
+# The simulated log returns are way higher than the actual observed ones. This suggests
+# that the normal distribution may not be a good approximation for real world market data.
+# So in general it seems that the overall range of returns for our normal data is way higher.
