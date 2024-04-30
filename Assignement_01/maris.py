@@ -25,7 +25,11 @@ def CRR_stock(S_0, r, sigma, T, M):
     return matrix
 
 
-result = CRR_stock(100, 0.03, 0.3, 1, 100)
+S = CRR_stock(100, 0.03, 0.3, 1, 100)
 
-#1
+#1b
+
+def CRR_EuCall(S_0, r, sigma, T, M, K):
+
+
 
