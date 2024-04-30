@@ -18,7 +18,7 @@ General Settings
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy.stats import norm
 
 """"----------------------------------------------------------------
 C-Exercise 01
@@ -26,16 +26,121 @@ C-Exercise 01
 # a) CRR Stock movement
 
 # 1.Step: Define function CRR_stock
+
+# Idea: We have a non-recombining tree so we just care about the results. 
+# Basically applied results from skript 1.5. Algorithm and discussion.
+
 def CRR_stock(S_0, r, sigma, T, M):
     
+    delta_t = T/M #cause all t's have equal distance
+    
+    # Skript: 1.4 to 1.7 - Setting u, d, q
+    beta = 0.5 * (math.exp(-r * delta_t) + math.exp(((r + np.power(sigma, 2)) * delta_t)))
+    u = beta + np.sqrt(np.power(beta, 2) - 1)
+    d = np.power(u, -1)
+    q = (math.exp(r * delta_t) - d) / (u - d)
+
+    # Set up empty S_ji array, Reminder:  M cause python index start at 0
+    S_ji = np.empty((M + 1, 1))
+    
+    # Apply our CRR_Formula S_ji = S_0 * u^j * d^(i-j)
+    for j in range(M + 1):
+        S_ji[j] = S_0 * np.power(u, j) * np.power(d, M - j)
+    
+    # Just to have "up"-values on the top
+    S_ji = np.flip(S_ji)
+    return (S_ji)
+
+# Test function
+S = CRR_stock(100, 0.03, 0.3, 1, 100) #Values from d)
+
+# Sense check S[50] == S_0?
+print(S[100])
+
+############### New Matrix Function  ------
+
+
+def CRR_Stockprice(S_0, r, sigma, T, M):
+    delta_t = T/M #cause all t's have equal distance
+    
+    # Skript: 1.4 to 1.7 - Setting u, d, q
+    beta = 0.5 * (math.exp(-r * delta_t) + math.exp(((r + np.power(sigma, 2)) * delta_t)))
+    u = beta + np.sqrt(np.power(beta, 2) - 1)
+    d = 1 / u
+    q = (math.exp(r * delta_t) - d) / (u - d)
+
+    # Set up empty S_ji array, Reminder:  M cause python index start at 0
+    S_ji = np.zeros((M + 1, M + 1))
+    
+    # Apply our CRR_Formula S_ji = S_0 * u^j * d^(i-j)    
+    for i in range(M + 1):
+        for j in range(i + 1):
+            S_ji[i][j] = S_0 * np.power(u, j) * np.power(d, i - j)
+    
+    return (S_ji)
+
+
+# Print results:
+S = CRR_Stockprice(100, 0.03, 0.3, 1, 10) #Values from d)
+print(S[0,:])
 
 
 
 # b) CRR European Call
 
+def CRR_EuCall(S_0, r, sigma, T, M, K):
+    ## Part a)
+    delta_t = T/M #cause all t's have equal distance
+    
+    # Skript: 1.4 to 1.7 - Setting u, d, q
+    beta = 0.5 * (math.exp(-r * delta_t) + math.exp(((r + np.power(sigma, 2)) * delta_t)))
+    u = beta + np.sqrt(np.power(beta, 2) - 1)
+    d = 1 / u
+    q = (math.exp(r * delta_t) - d) / (u - d)
+
+    # Set up empty S_ji array, Reminder:  M cause python index start at 0
+    S_ji = np.zeros(M + 1)
+    
+    # Apply our CRR_Formula S_ji = S_0 * u^j * d^(i-j)
+    for j in range(M + 1):
+        S_ji[j] = S_0 * np.power(u, j) * np.power(d, M - j)
+    
+    # Just to have "up"-values on the top
+    S_ji = np.flip(S_ji)
+    
+    ## New Part:
+    
+    # V_jM according to 1.16 - Calculate Euro Call payoff at Maturity T
+    V_jM = np.maximum(S_ji - K, 0)
+    
+    # Backwards loop?
+    
+    return V_jM
+
+
+Call = CRR_EuCall(100, 0.03, 0.3, 1, 4, 95)
+print(Call)
+
+
+
 
 
 # c) BS European Call
+def BlackScholes_EuCall(t, S_t, r, sigma, T, K):
+    d1 = (np.log(S_t/K) + (r + (np.power(sigma, 2)/2)) * (T-t)) / (sigma * np.sqrt(T-t))
+    d2 = d1 - sigma * np.sqrt(T-t)
+    
+    #Imported function from scipy to get normal cdf value
+    phi_d1 = norm.cdf(d1)
+    phi_d2 = norm.cdf(d2) #double check values with numpy
+    
+    V_0  = S_t * phi_d1 - K * math.exp(-r * (T-t)) * phi_d2    
+    
+    return V_0
+
+V_0_BS = BlackScholes_EuCall(0, 100, 0.03, 0.3, 100, 70)
+print(V_0_BS)
+
 
 
 # d) Comparing BS and CRR
@@ -60,10 +165,11 @@ def log_returns(data):
 ## Part 1: Working with log-returns
 
 # 1.Step: Import data
-dax = np.genfromtxt(r"C:\Users\josef\Documents\GitHub\Sem_2_Computational_Finance\Assignement_01\time_series_dax_2024.csv", 
+dax = np.genfromtxt("time_series_dax_2024.csv", 
                     delimiter = ';'
                     , usecols = 4,
                     skip_header = 1)
+
 
 # 2.Step: Flip ts 
 dax = np.flip(dax)
@@ -72,6 +178,8 @@ dax = np.flip(dax)
 dax_log_returns = log_returns(dax)
 
 # 4.Step: Visualize log returns
+
+plt.clf()
 plt.plot(dax_log_returns)
 
 plt.title('DAX Log-Returns (1990-2024)')
@@ -123,7 +231,7 @@ print(dax_simulated_log_returns)
 
 
 # 2.Step: Plot results
-
+plt.clf()
 plt.plot(dax_simulated_log_returns, color='blue')
 plt.plot(dax_log_returns, color='red')
 
@@ -136,4 +244,6 @@ plt.show()
 
 # d) Comparing empirical with simulated data
 
-    
+# The simulated are way more volatile than the actual market log returns. 
+# --> Normal distribution are related to "fat tails" so here we are overestimating our risk ???
+# seems weird tbh
