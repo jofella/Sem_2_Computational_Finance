@@ -211,7 +211,7 @@ def log_returns(data):
 
 # REMARK: We saw your comment on not including the path. But even when we put the file
 # in the same folder it doesn't work for all of us. 
-# We stored the path now in a seperate variable.
+# We stored the path now in a seperate variable now to make it easier to change.
 
 path = r"C:\Users\josef\Documents\GitHub\Sem_2_Computational_Finance\Assignement_01\time_series_dax_2024.csv"
 dax = np.genfromtxt(path, 
@@ -270,13 +270,11 @@ dax_empirical_sigma = np.sqrt(trading_days / (N - 2) * sum_lk)
 print(dax_empirical_sigma)
 
 
-
 # c) Simulate ts of log returns with normal distribution
 
 # 1.Step: Generate normally distributed values with our imput parameters
 dax_simulated_log_returns = np.random.normal(dax_empirical_mu, dax_empirical_sigma, N)
 print(np.mean(dax_log_returns), np.std(dax_log_returns))
-
 
 # 2.Step: Plot results
 plt.clf()
@@ -295,4 +293,12 @@ plt.show()
 
 # The simulated log returns are way higher than the actual observed ones. This suggests
 # that the normal distribution may not be a good approximation for real world market data.
-# So in general it seems that the overall range of returns for our normal data is way higher.
+# So in general it seems that the overall range of returns for our normal data is higher.
+
+# Further the simulated returns look much more homogenous. When you compare it to the observed ones
+# you see here different "clusters" meaning phases with large volatility and phases with very low vola.
+# This is not shown by our simulated returns.
+
+# This also referce to the so called "fat tails". So the problem with using normal distribution to simulate market data
+# is, that generaly the the extreme values (tails) are underestimated by the normal. Hence, it indicated that its not a
+# perfect "estimator".
