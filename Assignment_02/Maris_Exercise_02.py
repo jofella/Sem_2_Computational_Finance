@@ -39,7 +39,7 @@ def CRR_AmEuPur(S_0, r, sigma, T, M, K, EU):
     delta_t = T / M
     q = (math.exp(r * delta_t) - d) / (u - d)
 
-    # V will contain the call prices
+    # V will contain the put prices
     V = np.empty((M + 1, M + 1))
     # compute the prices of the put for all times t_i
     for m in range(0, M+1):
@@ -71,8 +71,8 @@ def CRR_AmEuPur(S_0, r, sigma, T, M, K, EU):
 
         return V[0,0]
 
-
-V_0 =CRR_AmEuPur(1, 0.05, (0.3**0.5), 3, 3, 1.2, 0)
+#check answers for 1
+V_0 =CRR_AmEuPur(1, 0.05, 0.3**0.5, 3, 3, 1.2, 0)
 
 
 #1b
@@ -87,11 +87,11 @@ def BlackScholes_EuPut (t, S_0, r, sigma, T, K):
 #1c
 S_0 = 100
 r = 0.05
-sigma = 0.3**0.5
+sigma = 0.3
 T = 1
 M = range(10, 501)
 K = 120
-
+n=BlackScholes_EuPut(0, S_0, r, sigma, T, K)
 V_0 = np.empty(491, dtype=float)
 V_0_BS = np.empty(491, dtype=float)
 
