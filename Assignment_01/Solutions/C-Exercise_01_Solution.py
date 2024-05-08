@@ -26,6 +26,10 @@ def CRR_stock(S_0, r, sigma, T, M):
 
     return S, u, d
 
+# Test function:
+
+
+
 # computes the price of european calls in the CRR model
 def CRR_EuCall(S_0, r, sigma, T, M, K):
     # use function from part a to compute S, u and d
