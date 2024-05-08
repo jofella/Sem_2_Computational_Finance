@@ -40,7 +40,6 @@ def Eu_Option_BS_MC(S_0, r, sigma, T, M, f):
    # Calculate discounted average = Option price
    V_0 = math.exp(-r * T) * np.mean(f(S_T))
 
-
    return V_0
 
 # Test function
