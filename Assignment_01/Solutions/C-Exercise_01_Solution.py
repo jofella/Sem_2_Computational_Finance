@@ -39,7 +39,7 @@ def CRR_EuCall(S_0, r, sigma, T, M, K):
     # V will contain the call prices
     V = np.empty((M + 1, M + 1))
     # compute the prices of the call at time T
-    V[:, M] = np.maximum(S[:, M] - K, 0)
+    V[:, M] = np.maximum(K - S[:, M], 0)
 
     # define recursion function
     def g(k):
@@ -51,7 +51,28 @@ def CRR_EuCall(S_0, r, sigma, T, M, K):
         V[0:k, k - 1] = g(k)
 
     # return the price of the call at time t_0 = 0
-    return V[0, 0]
+    return V
+
+
+# Test function
+S_0 = 1
+r = 0.05
+sigma = 0.3
+T = 3
+M = 100
+K = 1.2
+EU = 0
+
+# Print results
+Test_American = CRR_EuCall(S_0, r, sigma, T, M, K, EU)
+print(Test_American)
+
+
+
+
+
+
+
 
 
 # part b)

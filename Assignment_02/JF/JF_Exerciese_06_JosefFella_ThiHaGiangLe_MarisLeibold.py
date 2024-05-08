@@ -29,7 +29,6 @@ def CRR_stock(S_0, r, sigma, T, M):
     
     return (S_ji, u, d) # more convinient for 2.Step
 
-
 # 2.Step: Compute Put Option:
 def CRR_AmEuPut(S_0, r, sigma, T, M, K, EU):
     # Set u, d, q -- Ref. our CRR-stock-function
@@ -38,7 +37,7 @@ def CRR_AmEuPut(S_0, r, sigma, T, M, K, EU):
     q = (math.exp(r * delta_t) - d) / (u - d)
      
     # Set up call price matrix
-    V_ji = np.empty((M + 1, M + 1))
+    V_ji = np.zeros((M + 1, M + 1)) #change later
     
     # Get put prices at T (last column of matrix)
     V_ji[:, M] = np.maximum(K - S_ji[:, M], 0)  #### Attention here (Must be changed later)
@@ -52,20 +51,21 @@ def CRR_AmEuPut(S_0, r, sigma, T, M, K, EU):
         for i in range(M, 0, -1):
             for j in range(i):
                 V_ji[j, i-1] = discount_factor * (q * V_ji[j+1, i]+ (1-q) * V_ji[j, i]) # watch out fliped values!!!
-        return V_ji[0,0]
+        return V_ji[0, 0]
 
     # AmPut: Following skript 1.15/16
     elif EU == 0:
         
         for i in range(M, 0, -1):
             for j in range(i):
+                # Put price every timestep
                 AM_put_value = np.maximum(K - S_ji[j, i-1], 0)
                 
                 # Snell envelope
-                V_ji[j, i-1] = np.maximum(AM_put_value, discount_factor * (q * V_ji[j+1, i]+ (1-q) * V_ji[j, i]))
-        return V_ji[0,0]
+                V_ji[j, i-1] = np.maximum(AM_put_value, discount_factor * (q * V_ji[j+1, i] + (1-q) * V_ji[j, i]))
+        return V_ji[0, 0]
             
-    # Madatory elsewise we get into infinite loop    
+    # Madatory elsewise we get into infinite loop
     else:
         print('Your input must be 0 or 1')
 
@@ -73,9 +73,9 @@ def CRR_AmEuPut(S_0, r, sigma, T, M, K, EU):
 # Test function
 S_0 = 1
 r = 0.05
-sigma = 0.3**0.5
+sigma = 0.3
 T = 3
-M = 3
+M = 1000
 K = 1.2
 EU = 0
 
@@ -87,26 +87,24 @@ print(Test_American)
 # b) -- Essentially similar to Ass.01
 
 def BlackScholes_EuPut(t, S_0, r, sigma, T, K):
-    d1 = (np.log(S_0 / K) + (r + (np.power(sigma, 2) / 2)) * (T-t)) / (sigma * np.sqrt(T - t))
+    d1 = (np.log(S_0 / K) + (r + (np.power(sigma, 2) / 2)) * (T - t)) / (sigma * np.sqrt(T - t))
     d2 = d1 - sigma * np.sqrt(T - t)
     
-    # Calculate phi's
-    phi_d1 = scipy.stats.norm.cdf(-d1) # minus for put
+    # Calculate phi's --minus for put
+    phi_d1 = scipy.stats.norm.cdf(-d1)
     phi_d2 = scipy.stats.norm.cdf(-d2)
     
     # Get put price (slightly changed compared to Call)
     V_0  = K * math.exp(-r * (T - t)) * phi_d2  - S_0 * phi_d1    
     
-    return phi_d2
-
+    return V_0
 
 # Test function
-t = 1
+t = 0 #must be 0 else option price K - S_0
 S_0 = 100
 r = 0.05
 sigma = 0.3
 T = 1
-M = 4
 K = 110
 
 # Print results
@@ -114,10 +112,10 @@ S = BlackScholes_EuPut(t, S_0, r, sigma, T, K)
 print(S)
 
 
-# c)
+# c) -- Visualize data
 
-# Set input
-t = 1
+# Set parameters
+t = 0
 S_0 = 100
 r = 0.05
 sigma = 0.3
@@ -125,29 +123,26 @@ T = 1
 M = range(10, 501, 1)
 K = 120
 
-# Set data containers
-V_0_EuPut = np.empty(491, dtype=float)
-V_0_BS_Put = np.empty(491, dtype=float)
+# Set up data containers
+V_0_EuPut = np.empty(len(M), dtype=float) # make sure correct datatype
 
+# idea: setting the range from 0-10, BUT with M[i] we call the values in the range
 for i in range(0, len(M)):
-    V_0_EuPut[i] = CRR_AmEuPut(S_0, r, sigma, T, M[i], K, 1)
-    V_0_BS_Put[i] = BlackScholes_EuPut(t, S_0, r, sigma, T, K)
+    V_0_EuPut[i] = CRR_AmEuPut(S_0, r, sigma, T, M[i], K, EU = 1)
+V_0_BS_Put = BlackScholes_EuPut(t, S_0, r, sigma, T, K)
 
 
 # Plot data
 plt.clf()
-plt.plot(V_0_EuPut, 'b', label='CRR EuPut')
-plt.plot(V_0_BS_Put, 'r', label='BS EuPut')
+plt.plot(M, V_0_EuPut, 'r', label='CRR EuPut')
+plt.axhline(y = V_0_BS_Put, color = 'b', linestyle = '-', label='BS EuPut') # since one line
 
-plt.title('CRR Error against BS-Model')
-plt.xlabel('Strike Price (K)')
-plt.ylabel('Option Price')
+plt.title('CRR convergence to BS price')
+plt.xlabel('timesteps')
+plt.ylabel('option price')
 
 plt.legend()
 plt.show()
 
-EuPut = CRR_AmEuPut(S_0, r, sigma, T, M, K, 1)
-
-
-
-
+# AmPut:
+print(f"The price of the AmPut is: {CRR_AmEuPut(S_0, r, sigma, T, 500, K, 0)}")

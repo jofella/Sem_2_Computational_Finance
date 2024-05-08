@@ -18,7 +18,7 @@ General Settings
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+import scipy.stats
 
 """"----------------------------------------------------------------
 C-Exercise 01
@@ -128,11 +128,11 @@ def BlackScholes_EuCall(t, S_t, r, sigma, T, K):
     d2 = d1 - sigma * np.sqrt(T-t)
     
     # Imported from scipy to get normal cdf value
-    phi_d1 = norm.cdf(d1)
-    phi_d2 = norm.cdf(d2) #double check values with numpy
+    phi_d1 = scipy.stats.norm.cdf(d1)
+    phi_d2 = scipy.stats.norm.cdf(d2)
     
-    V_0  = S_t * phi_d1 - K * math.exp(-r * (T-t)) * phi_d2    
-    
+    V_0  = S_t * phi_d1 - K * math.exp(-r * (T-t)) * phi_d2
+        
     return V_0
 
 
