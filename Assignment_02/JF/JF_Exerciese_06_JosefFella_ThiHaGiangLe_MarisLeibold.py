@@ -135,7 +135,7 @@ V_0_BS_Put = BlackScholes_EuPut(t, S_0, r, sigma, T, K)
 # Plot data
 plt.clf()
 plt.plot(M, V_0_EuPut, 'r', label='CRR EuPut')
-plt.axhline(y = V_0_BS_Put, color = 'b', linestyle = '-', label='BS EuPut') # since one line
+plt.axhline(xmin=0, y = V_0_BS_Put, color = 'b', linestyle = '-', label='BS EuPut') # since one line
 
 plt.title('CRR convergence to BS price')
 plt.xlabel('timesteps')
