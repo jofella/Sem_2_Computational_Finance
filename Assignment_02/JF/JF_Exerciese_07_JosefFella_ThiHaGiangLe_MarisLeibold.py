@@ -46,8 +46,8 @@ def Eu_Option_BS_MC(S_0, r, sigma, T, M, f):
    sample_variance = math.sqrt(np.var(f(S_T), ddof=1))
    
    # 95% CI
-   c1 = V_0 - 1.96 * np.sqrt((sample_variance / M))
-   c2 = V_0 + 1.96 * np.sqrt((sample_variance / M))
+   c1 = V_0 - 1.96 * (sample_variance / M)
+   c2 = V_0 + 1.96 * (sample_variance / M)
 
    return V_0, c1, c2
 
