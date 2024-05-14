@@ -14,7 +14,7 @@ np.random.seed(28) # my favorite number
 
 # Build function
 
-def BS_EuOption_MC_CV(S0, r, sigma, T, K, M):
+def BS_EuOption_MC_CV(S_0, r, sigma, T, K, M):
     
 
 
@@ -32,7 +32,7 @@ V0 = BS_EuOption_MC_CV(S0, r, sigma, T, K, M)
 
 
 # MC from 07 --- Copy from solution
-def Eu_Option_BS_MC(S0, r, sigma, T, K, M, f):
+def Eu_Option_BS_MC(S_0, r, sigma, T, K, M, f):
     # generate M samples
     X = np.random.normal(0, 1, M)
     ST = np.empty(len(X), dtype=float)

@@ -12,69 +12,63 @@ import matplotlib.pyplot as plt
 np.random.seed(28) # my favorite number
 
 
+# Set target function -- here TruncNormal
+def target_function(a, b, mu, sigma, N):
+        # Uniform sample over range a and b
+        U_1 = np.random.uniform(a, b, N)
+        
+        # Calculating parts of f(X) -- ref. Sheet
+        transformed_normal_pdf  = scipy.stats.norm.pdf((U_1 - mu) / sigma)
+        transformed_normal_cdf_b = scipy.stats.norm.cdf((b - mu) / sigma)
+        transformed_normal_cdf_a = scipy.stats.norm.cdf((a - mu) / sigma)
+        
+        g_x = transformed_normal_pdf / (sigma * (transformed_normal_cdf_b - transformed_normal_cdf_a))
+
+        return U_1, g_x
+
+
+# Set sample generator
 def Sample_TruncNormal_AR(a, b, mu, sigma, N):
     
-    # 1.Step: Generate uniform samples size N
-    U_1 = np.random.uniform(a, b, N)
+    # 1.Step: Set up container & loop counter
+    trunc_normal_sample = np.empty(N, dtype=float)
+    i = 0
+    c = 9999
+    max_iter = 10000 # safety mechanism
     
-    # 2.Step: Define traget distribution (truncated normal)
-    transformed_normal_pdf  = scipy.stats.norm.pdf((U_1 - mu) / sigma)
-    transformed_normal_cdf_b = scipy.stats.norm.cdf((b - mu) / sigma)
-    transformed_normal_cdf_a = scipy.stats.norm.cdf((a - mu) / sigma)
-    
-    trunc_normal_sample = transformed_normal_pdf / (sigma * (transformed_normal_cdf_b - transformed_normal_cdf_a))
+    while i < N and max_iter > 0:
+        # Get samples (2 uniform + target function)
+        U_1, g_x = target_function(a, b, mu, sigma, 1)
+        U_2 = np.random.uniform(0, 1, 1)
+        
+        ratio = g_x / c * U_1
+        
+        # Accept
+        if U_2 <= ratio:
+            trunc_normal_sample[i] = U_2
+            i += 1
+        
+        # Reject - basically doing the same but not adding it -- maybe adding a safety mechanism
+        max_iter -= 1
 
-    # 3.Step: Generate second uniform sample as checking sample
-    U_2 = np.random.uniform(a, b, N)
-    
-    
-    # 4.Step: Checking if U =< f(Y) / c*g(Y) else go back
-    if U_2 <= (trunc_normal_sample / U_1):
-        print("You are right")
-    
-    else:
-        return ("You are wrong")
-    
-    
+    return trunc_normal_sample
+
+
 # Testing
-
 a = 0
 b = 1
 mu = 0
 sigma = 1
-N = 100
+N = 10 #sample size
 
 
-# 1.Step: Generate uniform samples size N
-U_1 = np.random.uniform(a, b, N)
-
-    
-# 2.Step: Define traget distribution (truncated normal)
-transformed_normal_pdf  = scipy.stats.norm.pdf((U_1 - mu) / sigma)
-transformed_normal_cdf_b = scipy.stats.norm.cdf((b - mu) / sigma)
-transformed_normal_cdf_a = scipy.stats.norm.cdf((a - mu) / sigma)
-
-trunc_normal_sample = transformed_normal_pdf / (sigma * (transformed_normal_cdf_b - transformed_normal_cdf_a))
-
-
-# 3.Step: Generate second uniform sample as checking sample
-U_2 = np.random.uniform(a, b, N)
-
-# Check ratio
-ratio = trunc_normal_sample / U_1
-
-
-# 4.Step: Checking if U =< f(Y) / c*g(Y) else go back
-if U_2 <= ratio:
-    print("You are right")
-    
-else:
-    print("You are wrong")
+Test = Sample_TruncNormal_AR(a, b, mu, sigma, N)
+print(Test)
 
 
 
-####################################################
 
+########################################################################################################
 
 # Fix parameters
 a = 0
@@ -87,10 +81,9 @@ TruncNormal_sample = Sample_TruncNormal_AR(a,b, mu, sigma, N)
 print(TruncNormal_sample)
 
 
-
 # Visualize data in histogram + f(x)
 plt.clf()
-plt.hist(pdf_standard_normal)
+plt.hist(TruncNormal_sample)
 
 plt.title(f'Histogram of normal distribution with $\mu = {mu}$ and $\sigma = {sigma}$') # from matplotlib doc
 plt.xlabel('bins')
