@@ -2,64 +2,63 @@
 # Group: QF2
 # Maris Leibold, Josef Fella, Thi Ha Giang Le
 
+
+### Corrected version of 07
+
 import math
 import numpy as np
 import scipy.stats
 import matplotlib.pyplot as plt
 
-
-# 1.Step: Get MC call price
-
 # Fix random seed
 np.random.seed(28) # my favorite number
 
-# Simulate paths
-S_0 = 100
-r = 0.04
-sigma = 0.2
-T = 1
-M = 100
 
 
-# Option call-price function
-def f(x):
-    return np.maximum(x - 100, 0)
+# Option function
+def f(x, K):
+    return np.maximum(x - K, 0) # more dynamic with K input function
 
 # MC function
 def Eu_Option_BS_MC(S_0, r, sigma, T, M, f):
-   # Get normal sample
+   
+   # 1.Step: Set up data
+    # Generate normal sample and container
    X = np.random.normal(0, 1, M)
+   S_T = np.empty(len(X), dtype = float)
+   Y = np.empty(len(X), dtype = float) # undiscounted Option prices
    
-   # Set up ST matrix
-   S_T = np.empty(len(X))
-   
-   # Simulate stock price with BS at T
+   # 2.Step: Simulate stock price with BS
    for i in range(0, M, 1):
-        S_T[i] = S_0 * math.exp((r - np.power(sigma, 2)) * T + sigma * np.sqrt(T) * X[i])
-    
-   # Calculate discounted average = Option price
-   V_0 = math.exp(-r * T) * np.mean(f(S_T))
+        S_T[i] = S_0 * math.exp((r - 0.5 * np.power(sigma, 2)) * T + sigma * np.sqrt(T) * X[i]) # forgot 0.5
+        Y[i] = f(S_T[i], K) #going thru all stock prices, otherwise constant!!!
+        
+   # 3.Step: Calculate V_hat (estimator) and V_0
+   V_hat = np.mean(Y)
+   V_0 = math.exp(-r * T) * V_hat
    
-   # Calculate 95% CI (skript p.13)
+   # 4.Step: Calculate 95% CI (skript p.13) -- corrected due to mistake
    
-   # Sample variance
-   sample_variance = math.sqrt(np.var(f(S_T), ddof=1))
+    # Sample variance
+   epsilon = 1.96 * math.sqrt(np.var(Y) / M) #from solutions
    
-   # 95% CI
-   c1 = V_0 - 1.96 * (sample_variance / M)
-   c2 = V_0 + 1.96 * (sample_variance / M)
+   c1 = math.exp(-r * T) * (V_hat - epsilon)
+   c2 = math.exp(-r * T) * (V_hat + epsilon)
 
-   return V_0, c1, c2
+   return V_0, V_hat, c1, c2
+
 
 # Test function
-S_0 = 100
+S_0 = 110
 r = 0.04
 sigma = 0.2
 T = 1
-M = 100
+M = 10000
+K = 100
 
-Test_Variable, c1, c2 = Eu_Option_BS_MC(S_0, r, sigma, T, M, f)
-print(Test_Variable, c1, c2)
+
+V_0, V_hat, c1, c2 = Eu_Option_BS_MC(S_0, r, sigma, T, M, f)
+print(V_0, V_hat, c1, c2)
 
 
 # 2.Step: Get  BS call price -- From 01
