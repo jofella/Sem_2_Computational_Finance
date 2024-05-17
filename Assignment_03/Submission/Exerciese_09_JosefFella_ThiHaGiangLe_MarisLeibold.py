@@ -51,7 +51,10 @@ N = 10000
 
 sample_AR = Sample_TruncNormal_AR(a, b, mu, sigma, N)
 
+
+# Visualize data
 plt.clf()
 plt.hist(sample_AR, density=True)
 x_range = np.linspace(-1,3,1000)
 plt.plot(x_range, stats.truncnorm.pdf(x_range, (a-mu)/sigma, (b-mu)/sigma, mu, sigma), "r")
+plt.show()

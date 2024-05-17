@@ -57,7 +57,7 @@ N = 100000
 alpha = 0.95
 
 
-[V_0, CIl, CIR] = BS_EuCall_MC_IS(S_0, r, sigma, K, T, mu, N, alpha)
+V_0 = BS_EuCall_MC_IS(S_0, r, sigma, K, T, mu, N, alpha)
 print(V_0)
 
 
