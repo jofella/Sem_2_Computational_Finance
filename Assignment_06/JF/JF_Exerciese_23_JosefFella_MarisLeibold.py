@@ -3,4 +3,12 @@
 # Maris Leibold, Josef Fella
 
 
+import math
+import numpy as np
+import scipy.stats
+import matplotlib.pyplot as plt
 
+
+# Complexe zahlen???
+
+ 
