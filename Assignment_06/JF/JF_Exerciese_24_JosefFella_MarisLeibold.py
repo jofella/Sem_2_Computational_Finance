@@ -16,13 +16,21 @@ def g(x):
     return np.maximum(k-x)
 
 
-def BS_AmPerpPut_ODE(S_max, N, r, sigma, K):
+def BS_AmPerpPut_ODE(S_max, N, r, sigma_square, K):
+    
+    # Compute x*
+    x_star = (2*K*r) (2*r+sigma_square)
+    
+    # Set equidistant grid
+    stock_grid = np.arange(0, S_max+1, 1)
     
     
-    np.power(sigma, 2) / 2
+    # Define ordinary differential eqaution
     
     
-    return
+    
+    return 
+
 
 
 
@@ -31,7 +39,7 @@ S_max = 200
 N = 200
 r = 0.05
 k = 100
-sigma = np.sqrt(0.4) # sigma^2
+sigma_square = 0.4
 K = 100
 
 
@@ -48,3 +56,15 @@ plt.xlabel('strike price (€)')
 plt.ylabel('delta')
 
 plt.show()
+
+
+
+
+
+
+
+
+
+#########################################
+
+
