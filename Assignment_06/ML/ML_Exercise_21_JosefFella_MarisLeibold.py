@@ -41,7 +41,7 @@ for S0 in range(60, 141):
 plt.clf()
 plt.plot(range(60, 141),Deltas)
 plt.title("Delta for call option")
-plt.xlabel("Stockprice")
+plt.xlabel("Initial Stockprice")
 plt.ylabel("Delta")
 plt.show()
 
