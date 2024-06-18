@@ -2,13 +2,15 @@
 # Group: QF2
 # Maris Leibold, Josef Fella
 
+import math
 import numpy as np
+import scipy.integrate
 import matplotlib.pyplot as plt
 from scipy import integrate
 
 
 
-# first ode steps (Understanding how the solver function in python works) // ref: https://www.youtube.com/watch?v=1fOqlbmWlPc - one of 10 vids...
+# first ode steps (Understanding how the solver in python works) // ref: https://www.youtube.com/watch?v=1fOqlbmWlPc - one of 10 vids...
 def f(t, r): # beware of argument order
     x, y = r
     fx = np.cos(y)
@@ -55,7 +57,7 @@ def BS_AmPerpPut_ODE(S_max, N, r, sigma_square, K):
     # v[0] = v(x) function we want solution for, s_span = range to get values from, 
     # y0 = initial condition for x* >= x simple option payoff, else dynamics by ODE
     
-    return result #like this it will output more than one solution array
+    return result #like this it will output more than one array
 
 
 

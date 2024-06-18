@@ -91,7 +91,7 @@ eps = 0.001
 
 
 # Set up data containers
-BS_Call_deltas = np.empty(len(S0), dtype=float) # make sure correct datatype
+BS_Call_deltas = np.empty(len(S0), dtype=float)
 
 # idea: ref. 06 --> looping thru range and sim. storing correctly
 for i in range(0, len(S0)):
@@ -104,7 +104,7 @@ plt.clf()
 plt.plot(S0, BS_Call_deltas)
 
 plt.title('Change of delta with different strike prices')
-plt.xlabel('strike price (€)')
+plt.xlabel('strike price')
 plt.ylabel('delta')
 
 plt.show()
