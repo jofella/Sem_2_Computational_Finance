@@ -2,10 +2,11 @@
 # Group: QF2
 # Maris Leibold, Josef Fella
 
-import math
+
 import numpy as np
 import scipy.integrate
 import matplotlib.pyplot as plt
+
 
 
 
