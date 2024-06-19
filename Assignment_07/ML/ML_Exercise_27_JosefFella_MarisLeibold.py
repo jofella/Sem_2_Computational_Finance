@@ -2,12 +2,11 @@
 # Group: QF2
 # Maris Leibold, Josef Fella
 
-from math import e
+
 import math
 import numpy as np
 import scipy.stats
 import scipy.optimize
-import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
 #a)
