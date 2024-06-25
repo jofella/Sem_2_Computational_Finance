@@ -1,4 +1,4 @@
-# C-Exercise 26, SS 2024
+# C-Exercise 28, SS 2024
 # Group: QF2
 # Maris Leibold, Josef Fella
 
@@ -16,6 +16,21 @@ def Heston_PCall_Lapl(S0, r, gam0, kappa, lamb, sig_tild, T, K, R, P):
     
     return
 
+
+
+
+
+# Test function
+S0 = np.arange(50:151)
+r = 0.05
+gam0 = 0.3**2
+kappa = 0.3**2
+lamb = 2.5
+sig_tild = 0.2
+T = 1
+K = 100
+# R = to be seen
+p = 1
 
 
 
