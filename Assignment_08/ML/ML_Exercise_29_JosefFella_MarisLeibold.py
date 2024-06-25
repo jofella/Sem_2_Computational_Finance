@@ -1,3 +1,7 @@
+# C-Exercise 29, SS 2024
+# Group: QF2
+# Maris Leibold, Josef Fella
+
 import numpy as np
 from scipy.stats import norm
 import scipy.misc
