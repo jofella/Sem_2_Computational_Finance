@@ -6,6 +6,7 @@ import numpy as np
 from scipy.stats import norm
 import scipy.misc
 
+
 #Define payoff function g
 def g(St):
     return np.maximum(St-90, 0)
